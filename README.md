@@ -254,6 +254,21 @@ main();
 * Replay attacks are possible in this demo (no nonce system)
 * This project is **educational**, not production-ready
 
+### ⚠️ Security Trade-Off (Educational Simplification)
+
+In this project, **public key recovery and sender address derivation are performed on the frontend**.
+
+⚠️ This is **not secure** in a real-world system.
+
+Because the backend trusts the sender address provided by the client, **anyone could impersonate another address** by submitting a forged request. In production systems, **the backend must independently recover the public key from the signature and derive the sender address** to establish cryptographic ownership.
+
+This design choice was made intentionally to:
+- Keep the project simple and beginner-friendly
+- Focus on understanding ECDSA signing and verification
+- Avoid overloading the backend logic early on
+
+🔒 **Do not use this architecture in production.**
+
 ---
 
 ## 🎯 What I Learned
