@@ -160,6 +160,37 @@ The server:
    * Matches the derived address against stored balances
 4. Funds move **only if cryptographic ownership is proven**.
 
+## 🧩 Transaction Flow Diagram
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant WalletScript as Wallet / Signing Script
+    participant Client as Web Client (React)
+    participant Server as Backend (Node + Express)
+
+    User->>WalletScript: Generate private & public key
+    WalletScript-->>User: Address (derived from public key)
+
+    User->>Client: Enter address
+    Client->>Server: Request balance
+    Server-->>Client: Return balance
+
+    User->>Client: Create transaction (to, amount)
+    Client-->>User: Message to sign
+
+    User->>WalletScript: Sign message with private key
+    WalletScript-->>User: Signature + Recovery Bit
+
+    User->>Client: Submit signed transaction
+    Client->>Server: {message, signature, recoveryBit}
+
+    Server->>Server: Recover public key
+    Server->>Server: Derive sender address
+    Server->>Server: Verify ownership & balance
+    Server-->>Client: Transaction result
+```
+
 ---
 
 ## ⚡ Key Scripts
