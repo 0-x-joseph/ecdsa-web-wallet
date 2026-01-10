@@ -6,11 +6,14 @@ const port = 3042;
 app.use(cors());
 app.use(express.json());
 
-const balances = {
-  "576eabd834cc87ed2877": 100,
-  cc403c0ed9fd6bdb24fd: 50,
-  "99130159a06169c18cd3": 75,
-};
+// const balances = {
+//   "576eabd834cc87ed2877": 100,
+//   cc403c0ed9fd6bdb24fd: 50,
+//   "99130159a06169c18cd3": 75,
+// };
+
+// generate some addresses using wallet-gen.js script like the above
+const balances = {};
 
 app.get("/balance/:address", (req, res) => {
   const { address } = req.params;

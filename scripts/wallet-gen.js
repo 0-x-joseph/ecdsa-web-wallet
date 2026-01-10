@@ -8,5 +8,5 @@ console.log("Private Key:", toHex(privateKey));
 const publicKey = secp.getPublicKey(privateKey);
 console.log("Public Key:", toHex(publicKey));
 
-const address = toHex(keccak256(publicKey)).slice(-40);
+const address = toHex(keccak256(publicKey)).slice(-20);
 console.log("Address: " + address);

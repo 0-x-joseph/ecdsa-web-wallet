@@ -208,8 +208,8 @@ console.log("Private Key:", toHex(privateKey));
 const publicKey = secp.getPublicKey(privateKey);
 console.log("Public Key:", toHex(publicKey));
 
-const address = toHex(keccak256(publicKey.slice(1))).slice(-40);
-console.log("Address: 0x" + address);
+const address = toHex(keccak256(publicKey)).slice(-20);
+console.log("Address: " + address);
 ```
 
 ---
