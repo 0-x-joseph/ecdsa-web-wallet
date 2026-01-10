@@ -182,12 +182,12 @@ sequenceDiagram
     User->>WalletScript: Sign message with private key
     WalletScript-->>User: Signature + Recovery Bit
 
-    User->>Client: Submit signed transaction
-    Client->>Server: {message, signature, recoveryBit}
+    User->>Client: Submit signature + recovery bit
+    Client->>Client: Recover public key
+    Client->>Client: Derive sender address
 
-    Server->>Server: Recover public key
-    Server->>Server: Derive sender address
-    Server->>Server: Verify ownership & balance
+    Client->>Server: {sender, recipient, amount, signature}
+    Server->>Server: Verify signature & balance
     Server-->>Client: Transaction result
 ```
 
