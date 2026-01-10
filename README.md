@@ -19,8 +19,9 @@ This project was completed as part of the **Alchemy University Blockchain Develo
 ## 📂 Project Structure
 
 ```
-/client     -> React + Vite frontend
-/server     -> Node.js + Express backend
+/client      -> React + Vite frontend
+/server      -> Node.js + Express backend
+/scripts     -> CLI utilities (wallet generation & message signing)
 ```
 
 ---
@@ -28,7 +29,6 @@ This project was completed as part of the **Alchemy University Blockchain Develo
 ## 🚀 Demo
 
 ![demo](demo.png)
-*(Optional: Add a screenshot of your app here)*
 
 ---
 
@@ -70,16 +70,95 @@ Server runs on **port 3042** by default.
 
 ---
 
-## 💡 How It Works
+## 🧭 How to Use the App (End-to-End Flow)
 
-1. **Private keys** are generated for each account. From these, **public keys** and **addresses** are derived.
-2. When a user wants to transfer funds:
+This application follows a **real cryptographic transaction flow**, similar to how wallets work in blockchain systems.
 
-   * The client signs the transaction with their private key.
-   * The server receives the signed transaction.
-   * The server **recovers the public key** from the signature.
-   * The server validates that the recovered public key matches an account with sufficient balance.
-3. Funds are transferred only if the signature is valid.
+### 1️⃣ Generate a Wallet (Private Key, Public Key, Address)
+
+Navigate to the `scripts` folder and run the wallet generation script:
+
+```bash
+cd scripts
+node wallet-gen.js
+```
+
+This will output:
+
+* A **private key** (keep this secret!)
+* A **public key**
+* An **Ethereum-style address**
+
+👉 Use the generated **address** in the web app as your wallet address.
+👉 The **private key is never sent to the server**.
+
+---
+
+### 2️⃣ Check Your Balance
+
+* Open the web app at `http://localhost:5173`
+* Paste your generated **address** into the wallet address input
+* Your balance (stored on the server) will be displayed
+
+---
+
+### 3️⃣ Create a Signature for a Transaction
+
+When you want to send funds:
+
+1. Enter:
+
+   * Recipient address
+   * Amount
+2. The app will construct a **message representing the transaction**
+3. Use the signing script to sign that message with your private key
+
+From the `scripts` folder:
+
+```bash
+node sign-msg.js
+```
+
+You will be prompted for:
+
+* Your **private key** (hidden while typing)
+* The **exact message shown in the app**
+
+The script outputs:
+
+* **Signature**
+* **Recovery bit**
+
+---
+
+### 4️⃣ Send the Signed Transaction
+
+Back in the web app:
+
+* Paste the **signature**
+* Paste the **recovery bit**
+* Submit the transaction
+
+✨ **Voilà!**
+The server:
+
+* Recovers the public key from the signature
+* Derives the sender’s address
+* Verifies ownership
+* Transfers the funds if the signature is valid
+
+---
+
+## 💡 How It Works (Under the Hood)
+
+1. The client **never sends private keys**.
+2. Transactions are signed client-side using ECDSA.
+3. The server:
+
+   * Verifies the signature
+   * Recovers the public key from `(signature + recovery bit)`
+   * Matches the derived address against stored balances
+4. Funds move **only if cryptographic ownership is proven**.
 
 ---
 
@@ -118,7 +197,11 @@ function hashMessage(message) {
 const privateKey = "<your_private_key_here>";
 const message = "Send 5 coins to 0xabc...";
 
-const [signature, recoveryBit] = await secp.sign(hashMessage(message), privateKey, { recovered: true });
+const [signature, recoveryBit] = await secp.sign(
+  hashMessage(message),
+  privateKey,
+  { recovered: true }
+);
 
 console.log("Signature:", toHex(signature));
 console.log("Recovery Bit:", recoveryBit);
@@ -128,34 +211,36 @@ console.log("Recovery Bit:", recoveryBit);
 
 ## 🔐 Security Notes
 
-* Never store or expose private keys in the frontend in a production environment.
-* This project **simulates** secure transactions using digital signatures, but it is **not a real cryptocurrency**.
-* Replay attacks are possible if you send the same signed message twice; in production, you would need **nonces** or **timestamps** to prevent this.
+* Private keys **never leave the user’s machine**
+* The server relies entirely on **signature verification**
+* Replay attacks are possible in this demo (no nonce system)
+* This project is **educational**, not production-ready
 
 ---
 
 ## 🎯 What I Learned
 
-* Implementing **ECDSA signing and verification** in a web app
-* Using **Ethereum-style addresses** derived from public keys
-* Handling client-server **signed transactions**
-* Basics of **secure cryptocurrency-like systems**
-* Practical experience from **Alchemy University Blockchain Developer Bootcamp**
+* Implementing **ECDSA signing and verification**
+* Recovering public keys from signatures
+* Designing a **secure client–server crypto flow**
+* Ethereum-style address derivation
+* Hands-on cryptography via **Alchemy University**
 
 ---
 
 ## 📌 Extra Credit / Next Steps
 
-* Implement a **nonce system** to prevent replay attacks
-* Add a **user-friendly wallet generator** in the frontend
-* Explore **multi-signature transactions**
-* Extend to a **real blockchain-backed application**
+* Add **nonces** to prevent replay attacks
+* Build an in-app wallet generator
+* Add **transaction history**
+* Explore multi-signature wallets
+* Connect to a real blockchain backend
 
 ---
 
 ## 🔗 References
 
 * [Alchemy University Blockchain Developer Bootcamp](https://university.alchemy.com/)
-* [Noble secp256k1 library](https://github.com/paulmillr/noble-secp256k1)
-* [Ethereum Cryptography Library](https://www.npmjs.com/package/ethereum-cryptography)
+* [Noble secp256k1](https://github.com/paulmillr/noble-secp256k1)
+* [Ethereum Cryptography](https://www.npmjs.com/package/ethereum-cryptography)
 * [ECDSA Overview](https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm)
