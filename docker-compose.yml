@@ -1,0 +1,29 @@
+services:
+  backend:
+    container_name: backend
+    environment:
+      - PORT=4000
+    build:
+      context: ./server
+    ports:
+      - "4000:4000"
+    networks:
+      - app-network
+
+  frontend:
+    container_name: frontend
+    environment:
+      - PORT=5173
+      - VITE_BACKEND_URL=http://backend:4000
+    build:
+      context: ./client
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
