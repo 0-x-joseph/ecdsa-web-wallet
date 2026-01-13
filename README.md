@@ -70,6 +70,37 @@ Server runs on **port 3042** by default.
 
 ---
 
+## 🐳 Running with Docker Compose
+
+You can run the full stack (frontend + backend) using Docker Compose without manually starting `npm` on each service.
+
+### 1️⃣ Build and Start Containers
+
+From the root of the project (where `docker-compose.yml` lives):
+
+```bash
+docker-compose up --build
+```
+
+* This will **build the frontend and backend images** and start the containers
+* The frontend container listens on **5173**
+* The backend container listens on **4000** (or the port you configured)
+* Compose automatically sets up a network so the frontend can reach the backend at `http://backend:4000`
+
+---
+
+### 2️⃣ Access the Frontend
+
+Open your browser:
+
+```
+http://localhost:5173
+```
+
+* The frontend will load and communicate with the backend through the internal Docker network
+
+---
+
 ## 🧭 How to Use the App (End-to-End Flow)
 
 This application follows a **real cryptographic transaction flow**, similar to how wallets work in blockchain systems.
@@ -297,3 +328,5 @@ This design choice was made intentionally to:
 * [Noble secp256k1](https://github.com/paulmillr/noble-secp256k1)
 * [Ethereum Cryptography](https://www.npmjs.com/package/ethereum-cryptography)
 * [ECDSA Overview](https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm)
+
+---
